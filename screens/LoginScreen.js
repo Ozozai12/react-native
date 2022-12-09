@@ -10,14 +10,32 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from "react-native";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 import { useState } from "react";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keyboardShown, setKeyboardShown] = useState(false);
+  const [fontsLoaded] = useFonts({
+    RobotoMedium: require("./assets/fonts/Roboto-Medium.ttf"),
+    RobotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
+  });
   const emailInputHandler = (text) => setEmail(text);
   const passwordInputHandler = (text) => setPassword(text);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const onLogin = () => {
     console.log(`You loged in as ${email} with ${password}`);
@@ -29,7 +47,7 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayoutRootView}>
       <TouchableWithoutFeedback onPress={keyboardClose}>
         <ImageBackground
           source={require("./assets/Images/backgroundImg.jpg")}
@@ -105,6 +123,7 @@ const styles = StyleSheet.create({
     paddingTop: 33,
     fontSize: 30,
     fontWeight: "500",
+    fontFamily: "RobotoMedium",
   },
   input: {
     marginHorizontal: 16,
@@ -114,6 +133,7 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     borderRadius: 8,
     backgroundColor: "#F6F6F6",
+    fontFamily: "RobotoRegular",
   },
   button: {
     borderRadius: 100,
@@ -128,9 +148,11 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: 16,
     color: "#fff",
+    fontFamily: "RobotoRegular",
   },
   cta: {
     textAlign: "center",
     marginBottom: 143,
+    fontFamily: "RobotoRegular",
   },
 });
