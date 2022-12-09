@@ -23,17 +23,26 @@ export default function App() {
     console.log(`You loged in as ${name} with ${password}`);
   };
 
+  const keyboardClose = () => {
+    setKeyboardShown(false);
+    Keyboard.dismiss();
+  };
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={keyboardClose}>
         <ImageBackground
           source={require("./assets/Images/backgroundImg.jpg")}
           style={styles.image}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+          <View
+            style={{
+              ...styles.form,
+              marginBottom:
+                Platform.OS == "android" && keyboardShown ? -230 : 0,
+            }}
           >
-            <View style={styles.form}>
+            <KeyboardAvoidingView behavior={Platform.OS == "ios" && "padding"}>
               <Text style={styles.heading}>Увійти</Text>
 
               <View>
@@ -45,7 +54,12 @@ export default function App() {
                   onFocus={() => setKeyboardShown(true)}
                 />
               </View>
-              <View style={{ marginTop: 16 }}>
+              <View
+                style={{
+                  marginTop: 16,
+                  marginBottom: Platform.OS == "ios" && keyboardShown ? 100 : 0,
+                }}
+              >
                 <TextInput
                   secureTextEntry={true}
                   placeholder="Пароль"
@@ -55,16 +69,15 @@ export default function App() {
                   onFocus={() => setKeyboardShown(true)}
                 />
               </View>
-            </View>
-          </KeyboardAvoidingView>
-
-          <TouchableOpacity onPress={onLogin} style={styles.button}>
-            <Text style={styles.btnText}>Увійти</Text>
-          </TouchableOpacity>
-          <Text style={styles.cta}>Немає акаунту? Зареєструватися</Text>
+            </KeyboardAvoidingView>
+            <TouchableOpacity onPress={onLogin} style={styles.button}>
+              <Text style={styles.btnText}>Увійти</Text>
+            </TouchableOpacity>
+            <Text style={styles.cta}>Немає акаунту? Зареєструватися</Text>
+          </View>
         </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </View>
   );
 }
 
@@ -82,7 +95,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    paddingBottom: 16,
   },
   thumb: {
     backgroundColor: "#fff",
@@ -92,6 +104,7 @@ const styles = StyleSheet.create({
     marginBottom: 33,
     paddingTop: 33,
     fontSize: 30,
+    fontWeight: "500",
   },
   input: {
     marginHorizontal: 16,
@@ -118,15 +131,6 @@ const styles = StyleSheet.create({
   },
   cta: {
     textAlign: "center",
-    marginBottom: 132,
+    marginBottom: 143,
   },
 });
-
-{
-  /* <View
-  style={{
-    ...styles.form,
-    marginTop: keyboardShown ? 273 : 323,
-  }}
-></View>; */
-}
