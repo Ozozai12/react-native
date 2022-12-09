@@ -13,14 +13,14 @@ import {
 import { useState } from "react";
 
 export default function App() {
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keyboardShown, setKeyboardShown] = useState(false);
-  const nameInputHandler = (text) => setName(text);
+  const emailInputHandler = (text) => setEmail(text);
   const passwordInputHandler = (text) => setPassword(text);
 
   const onLogin = () => {
-    console.log(`You loged in as ${name} with ${password}`);
+    console.log(`You loged in as ${email} with ${password}`);
   };
 
   const keyboardClose = () => {
@@ -48,8 +48,8 @@ export default function App() {
               <View>
                 <TextInput
                   placeholder="Адреса електронної пошти"
-                  value={name}
-                  onChangeText={nameInputHandler}
+                  value={email}
+                  onChangeText={emailInputHandler}
                   style={styles.input}
                   onFocus={() => setKeyboardShown(true)}
                 />
