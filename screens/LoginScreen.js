@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,55 +47,68 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <TouchableWithoutFeedback onPress={keyboardClose}>
+    <TouchableWithoutFeedback onPress={keyboardClose}>
+      <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground
           source={require("./assets/Images/backgroundImg.jpg")}
-          style={styles.image}
+          style={{
+            ...styles.image,
+            marginBottom: Platform.OS == "android" && keyboardShown ? -240 : 0,
+          }}
         >
           <View
             style={{
-              ...styles.form,
-              marginBottom:
-                Platform.OS == "android" && keyboardShown ? -230 : 0,
+              ...styles.screen,
+              marginBottom: Platform.OS == "android" && keyboardShown ? 240 : 0,
             }}
           >
-            <KeyboardAvoidingView behavior={Platform.OS == "ios" && "padding"}>
-              <Text style={styles.heading}>Увійти</Text>
-
-              <View>
-                <TextInput
-                  placeholder="Адреса електронної пошти"
-                  value={email}
-                  onChangeText={emailInputHandler}
-                  style={styles.input}
-                  onFocus={() => setKeyboardShown(true)}
-                />
-              </View>
-              <View
-                style={{
-                  marginTop: 16,
-                  marginBottom: Platform.OS == "ios" && keyboardShown ? 100 : 0,
-                }}
+            <View
+              style={{
+                ...styles.form,
+                marginBottom:
+                  Platform.OS == "android" && keyboardShown ? -230 : 0,
+              }}
+            >
+              <KeyboardAvoidingView
+                behavior={Platform.OS == "ios" && "padding"}
               >
-                <TextInput
-                  secureTextEntry={true}
-                  placeholder="Пароль"
-                  value={password}
-                  onChangeText={passwordInputHandler}
-                  style={styles.input}
-                  onFocus={() => setKeyboardShown(true)}
-                />
-              </View>
-            </KeyboardAvoidingView>
-            <TouchableOpacity onPress={onLogin} style={styles.button}>
-              <Text style={styles.btnText}>Увійти</Text>
-            </TouchableOpacity>
-            <Text style={styles.cta}>Немає акаунту? Зареєструватися</Text>
+                <Text style={styles.heading}>Увійти</Text>
+
+                <View>
+                  <TextInput
+                    placeholder="Адреса електронної пошти"
+                    value={email}
+                    onChangeText={emailInputHandler}
+                    style={styles.input}
+                    onFocus={() => setKeyboardShown(true)}
+                  />
+                </View>
+                <View
+                  style={{
+                    marginTop: 16,
+                    marginBottom:
+                      Platform.OS == "ios" && keyboardShown ? 100 : 0,
+                  }}
+                >
+                  <TextInput
+                    secureTextEntry={true}
+                    placeholder="Пароль"
+                    value={password}
+                    onChangeText={passwordInputHandler}
+                    style={styles.input}
+                    onFocus={() => setKeyboardShown(true)}
+                  />
+                </View>
+              </KeyboardAvoidingView>
+              <TouchableOpacity onPress={onLogin} style={styles.button}>
+                <Text style={styles.btnText}>Увійти</Text>
+              </TouchableOpacity>
+              <Text style={styles.cta}>Немає акаунту? Зареєструватися</Text>
+            </View>
           </View>
         </ImageBackground>
-      </TouchableWithoutFeedback>
-    </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -107,6 +120,10 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     resizeMode: "cover",
+  },
+  screen: {
+    flex: 1,
+    backgroundColor: "transparent",
     justifyContent: "flex-end",
   },
   form: {

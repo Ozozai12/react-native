@@ -11,10 +11,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useFonts } from "expo-font";
-// import * as SplashScreen from "expo-splash-screen";
-import { useState } from "react";
+import * as SplashScreen from "expo-splash-screen";
+import { useState, useCallback } from "react";
 
-// SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [email, setEmail] = useState("");
@@ -27,15 +27,15 @@ export default function App() {
   const emailInputHandler = (text) => setEmail(text);
   const passwordInputHandler = (text) => setPassword(text);
 
-  // const onLayoutRootView = useCallback(async () => {
-  //   if (fontsLoaded) {
-  //     await SplashScreen.hideAsync();
-  //   }
-  // }, [fontsLoaded]);
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
-  // if (!fontsLoaded) {
-  //   return null;
-  // }
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const onLogin = () => {
     console.log(`You loged in as ${email} with ${password}`);
@@ -48,7 +48,7 @@ export default function App() {
 
   return (
     <TouchableWithoutFeedback onPress={keyboardClose}>
-      <View style={styles.container}>
+      <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground
           source={require("./assets/Images/backgroundImg.jpg")}
           style={{
