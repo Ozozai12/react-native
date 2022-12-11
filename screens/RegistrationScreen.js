@@ -12,33 +12,33 @@ import {
   Image,
 } from "react-native";
 import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
+// import * as SplashScreen from "expo-splash-screen";
 import { useState } from "react";
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keyboardShown, setKeyboardShown] = useState(false);
-  const [fontsLoaded] = useFonts({
-    RobotoMedium: require("./assets/fonts/Roboto-Medium.ttf"),
-    RobotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
-  });
+  // const [fontsLoaded] = useFonts({
+  //   RobotoMedium: require("./assets/fonts/Roboto-Medium.ttf"),
+  //   RobotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
+  // });
   const nameInputHandler = (text) => setName(text);
   const emailInputHandler = (text) => setEmail(text);
   const passwordInputHandler = (text) => setPassword(text);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+  // const onLayoutRootView = useCallback(async () => {
+  //   if (fontsLoaded) {
+  //     await SplashScreen.hideAsync();
+  //   }
+  // }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  // if (!fontsLoaded) {
+  //   return null;
+  // }
 
   const onLogin = () => {
     console.log(
@@ -52,70 +52,83 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <TouchableWithoutFeedback onPress={keyboardClose}>
+    <TouchableWithoutFeedback onPress={keyboardClose}>
+      <View style={styles.container}>
         <ImageBackground
           source={require("./assets/Images/backgroundImg.jpg")}
-          style={styles.image}
+          style={{
+            ...styles.image,
+            marginBottom: Platform.OS == "android" && keyboardShown ? -240 : 0,
+          }}
         >
           <View
             style={{
-              ...styles.form,
-              marginBottom:
-                Platform.OS == "android" && keyboardShown ? -170 : 0,
+              ...styles.screen,
+              marginBottom: Platform.OS == "android" && keyboardShown ? 240 : 0,
             }}
           >
-            <View style={styles.avatar}>
-              <Image
-                style={styles.addBtn}
-                source={require("./assets/Icons/addButton.png")}
-              />
-            </View>
-            <KeyboardAvoidingView behavior={Platform.OS == "ios" && "padding"}>
-              <Text style={styles.heading}>Реєстрація</Text>
-
-              <View>
-                <TextInput
-                  placeholder="Логін"
-                  value={name}
-                  onChangeText={nameInputHandler}
-                  style={styles.input}
-                  onFocus={() => setKeyboardShown(true)}
+            <View
+              style={{
+                ...styles.form,
+                marginBottom:
+                  Platform.OS == "android" && keyboardShown ? -170 : 0,
+              }}
+            >
+              <View style={styles.avatar}>
+                <Image
+                  style={styles.addBtn}
+                  source={require("./assets/Icons/addButton.png")}
                 />
               </View>
-              <View style={{ marginTop: 16 }}>
-                <TextInput
-                  placeholder="Адреса електронної пошти"
-                  value={email}
-                  onChangeText={emailInputHandler}
-                  style={styles.input}
-                  onFocus={() => setKeyboardShown(true)}
-                />
-              </View>
-              <View
-                style={{
-                  marginTop: 16,
-                  marginBottom: Platform.OS == "ios" && keyboardShown ? 150 : 0,
-                }}
+              <KeyboardAvoidingView
+                behavior={Platform.OS == "ios" && "padding"}
               >
-                <TextInput
-                  secureTextEntry={true}
-                  placeholder="Пароль"
-                  value={password}
-                  onChangeText={passwordInputHandler}
-                  style={styles.input}
-                  onFocus={() => setKeyboardShown(true)}
-                />
-              </View>
-            </KeyboardAvoidingView>
-            <TouchableOpacity onPress={onLogin} style={styles.button}>
-              <Text style={styles.btnText}>Зареєструватися</Text>
-            </TouchableOpacity>
-            <Text style={styles.cta}>Вже є акаунт? Увійти</Text>
+                <Text style={styles.heading}>Реєстрація</Text>
+
+                <View>
+                  <TextInput
+                    placeholder="Логін"
+                    value={name}
+                    onChangeText={nameInputHandler}
+                    style={styles.input}
+                    onFocus={() => setKeyboardShown(true)}
+                  />
+                </View>
+                <View style={{ marginTop: 16 }}>
+                  <TextInput
+                    placeholder="Адреса електронної пошти"
+                    value={email}
+                    onChangeText={emailInputHandler}
+                    style={styles.input}
+                    onFocus={() => setKeyboardShown(true)}
+                  />
+                </View>
+                <View
+                  style={{
+                    marginTop: 16,
+                    marginBottom:
+                      Platform.OS == "ios" && keyboardShown ? 150 : 0,
+                  }}
+                >
+                  <TextInput
+                    secureTextEntry={true}
+                    placeholder="Пароль"
+                    value={password}
+                    onChangeText={passwordInputHandler}
+                    style={styles.input}
+                    onFocus={() => setKeyboardShown(true)}
+                  />
+                </View>
+              </KeyboardAvoidingView>
+              <TouchableOpacity onPress={onLogin} style={styles.button}>
+                <Text style={styles.btnText}>Зареєструватися</Text>
+              </TouchableOpacity>
+              <Text style={styles.cta}>Вже є акаунт? Увійти</Text>
+            </View>
           </View>
         </ImageBackground>
-      </TouchableWithoutFeedback>
-    </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -127,6 +140,10 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     resizeMode: "cover",
+  },
+  screen: {
+    flex: 1,
+    backgroundColor: "transparent",
     justifyContent: "flex-end",
   },
   form: {
