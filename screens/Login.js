@@ -16,13 +16,13 @@ import { useState, useCallback } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function App() {
+export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keyboardShown, setKeyboardShown] = useState(false);
   const [fontsLoaded] = useFonts({
-    RobotoMedium: require("./assets/fonts/Roboto-Medium.ttf"),
-    RobotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
+    RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
+    RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
   });
   const emailInputHandler = (text) => setEmail(text);
   const passwordInputHandler = (text) => setPassword(text);
@@ -38,7 +38,7 @@ export default function App() {
   }
 
   const onLogin = () => {
-    console.log(`You loged in as ${email} with ${password}`);
+    navigation.navigate("Home");
   };
 
   const keyboardClose = () => {
@@ -50,7 +50,7 @@ export default function App() {
     <TouchableWithoutFeedback onPress={keyboardClose}>
       <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground
-          source={require("./assets/Images/backgroundImg.jpg")}
+          source={require("../assets/Images/backgroundImg.jpg")}
           style={{
             ...styles.image,
             marginBottom: Platform.OS == "android" && keyboardShown ? -240 : 0,
@@ -103,7 +103,12 @@ export default function App() {
               <TouchableOpacity onPress={onLogin} style={styles.button}>
                 <Text style={styles.btnText}>Увійти</Text>
               </TouchableOpacity>
-              <Text style={styles.cta}>Немає акаунту? Зареєструватися</Text>
+              <Text style={styles.cta}>
+                Немає акаунту?{" "}
+                <Text onPress={() => navigation.navigate("Registration")}>
+                  Зареєструватися
+                </Text>
+              </Text>
             </View>
           </View>
         </ImageBackground>

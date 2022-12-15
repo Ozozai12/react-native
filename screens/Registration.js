@@ -17,14 +17,14 @@ import { useState, useCallback } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function App() {
+export default function Registration({ navigation }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keyboardShown, setKeyboardShown] = useState(false);
   const [fontsLoaded] = useFonts({
-    RobotoMedium: require("./assets/fonts/Roboto-Medium.ttf"),
-    RobotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
+    RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
+    RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
   });
   const nameInputHandler = (text) => setName(text);
   const emailInputHandler = (text) => setEmail(text);
@@ -41,9 +41,7 @@ export default function App() {
   }
 
   const onLogin = () => {
-    console.log(
-      `You loged in as "${name}" and email ${email} with password "${password}"`
-    );
+    navigation.navigate("Home");
   };
 
   const keyboardClose = () => {
@@ -55,7 +53,7 @@ export default function App() {
     <TouchableWithoutFeedback onPress={keyboardClose}>
       <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground
-          source={require("./assets/Images/backgroundImg.jpg")}
+          source={require("../assets/Images/backgroundImg.jpg")}
           style={{
             ...styles.image,
             marginBottom: Platform.OS == "android" && keyboardShown ? -240 : 0,
@@ -77,7 +75,7 @@ export default function App() {
               <View style={styles.avatar}>
                 <Image
                   style={styles.addBtn}
-                  source={require("./assets/Icons/addButton.png")}
+                  source={require("../assets/Icons/addButton.png")}
                 />
               </View>
               <KeyboardAvoidingView
@@ -123,7 +121,10 @@ export default function App() {
               <TouchableOpacity onPress={onLogin} style={styles.button}>
                 <Text style={styles.btnText}>Зареєструватися</Text>
               </TouchableOpacity>
-              <Text style={styles.cta}>Вже є акаунт? Увійти</Text>
+              <Text style={styles.cta}>
+                Вже є акаунт?{" "}
+                <Text onPress={() => navigation.navigate("Login")}>Увійти</Text>
+              </Text>
             </View>
           </View>
         </ImageBackground>
