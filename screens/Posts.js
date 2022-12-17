@@ -6,10 +6,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function Home() {
+export default function Posts() {
   const [fontsLoaded] = useFonts({
     RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
     RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
+    RobotoBold: require("../assets/fonts/Roboto-Bold.ttf"),
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -47,8 +48,61 @@ export default function Home() {
             <Text style={styles.email}>email@example.com</Text>
           </View>
         </View>
+        <View style={styles.posts}>
+          <View style={styles.postItem}>
+            <View style={styles.postBackdrop} />
+            <View style={styles.credentials}>
+              <Text style={styles.postName}>Назва</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image
+                    source={require("../assets/Icons/message-circle.png")}
+                  />
+                  <Text
+                    style={{
+                      color: "#BDBDBD",
+                      fontFamily: "RobotoRegular",
+                      fontSize: 16,
+                      marginLeft: 6,
+                    }}
+                  >
+                    0
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image source={require("../assets/Icons/map-pin.png")} />
+                  <Text
+                    style={{
+                      fontFamily: "RobotoRegular",
+                      fontSize: 16,
+                      marginLeft: 4,
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    Локація
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
       </View>
-      <View style={styles.tabs}></View>
     </View>
   );
 }
@@ -88,11 +142,30 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   name: {
-    fontFamily: "RobotoMedium",
+    fontFamily: "RobotoBold",
     fontSize: 13,
   },
   email: {
     fontFamily: "RobotoRegular",
     fontSize: 11,
+  },
+  posts: {
+    marginHorizontal: 16,
+    marginTop: 32,
+    justifyContent: "center",
+  },
+  postBackdrop: {
+    width: 343,
+    height: 240,
+    backgroundColor: "#E8E8E8",
+    borderRadius: 8,
+  },
+  credentials: {
+    marginTop: 8,
+  },
+  postName: {
+    fontFamily: "RobotoMedium",
+    fontSize: 16,
+    marginBottom: 8,
   },
 });
