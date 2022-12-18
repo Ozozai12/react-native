@@ -81,17 +81,17 @@ export default function Comments({ navigation }) {
               </View>
             </View>
           </View>
-          <View style={styles.commentInput}>
-            <TextInput
-              placeholder="Коментувати..."
-              value={comment}
-              onChangeText={commentInputHandler}
-              style={{ paddingLeft: 16, fontSize: 16, color: "#BDBDBD" }}
-              onFocus={() => setKeyboardShown(true)}
-            />
-            <View style={styles.commetnBtn}>
-              <Image source={require("../assets/Icons/Vector.png")} />
-            </View>
+        </View>
+        <View style={styles.commentInput}>
+          <TextInput
+            placeholder="Коментувати..."
+            value={comment}
+            onChangeText={commentInputHandler}
+            style={{ paddingLeft: 16, fontSize: 16, color: "#BDBDBD" }}
+            onFocus={() => setKeyboardShown(true)}
+          />
+          <View style={styles.commetnBtn}>
+            <Image source={require("../assets/Icons/Vector.png")} />
           </View>
         </View>
       </View>
@@ -207,12 +207,16 @@ const styles = StyleSheet.create({
   },
   commentInput: {
     marginHorizontal: 16,
+    marginBottom: 16,
+    width: 343,
     height: 50,
     backgroundColor: "#F6F6F6",
     borderRadius: 25,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    position: "absolute",
+    bottom: 0,
   },
   commetnBtn: {
     width: 34,
