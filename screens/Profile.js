@@ -1,18 +1,20 @@
-import { View, Text, StyleSheet, ImageBackground, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 
-export default function Profile() {
+export default function Profile({ navigation }) {
   return (
     <View style={styles.container}>
       <ImageBackground
         source={require("../assets/Images/backgroundImg.jpg")}
         style={styles.image}
       >
-        <View
-          style={{
-            ...styles.screen,
-            marginBottom: Platform.OS == "android" && keyboardShown ? 240 : 0,
-          }}
-        >
+        <View style={styles.screen}>
           <View style={styles.postsContainer}>
             <View style={styles.avatar}>
               <Image
@@ -47,9 +49,13 @@ export default function Profile() {
                         alignItems: "center",
                       }}
                     >
-                      <Image
-                        source={require("../assets/Icons/message-circle.png")}
-                      />
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("Comments")}
+                      >
+                        <Image
+                          source={require("../assets/Icons/message-circle.png")}
+                        />
+                      </TouchableOpacity>
                       <Text
                         style={{
                           color: "#BDBDBD",
