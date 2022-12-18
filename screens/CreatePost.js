@@ -16,7 +16,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function CreatePost() {
+export default function CreatePost({ navigation }) {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [fontsLoaded] = useFonts({
@@ -48,7 +48,10 @@ export default function CreatePost() {
     <TouchableWithoutFeedback onPress={keyboardClose}>
       <View style={styles.container} onLayout={onLayoutRootView}>
         <View style={styles.header}>
-          <Image source={require("../assets/Icons/arrow-left.png")} />
+          <TouchableOpacity onPress={() => navigation.navigate("Posts")}>
+            <Image source={require("../assets/Icons/arrow-left.png")} />
+          </TouchableOpacity>
+
           <Text style={styles.title}>Створити публікацію</Text>
           <View
             style={{ width: 24, height: 24, backgroundColor: "transparent" }}
@@ -93,7 +96,9 @@ export default function CreatePost() {
             </KeyboardAvoidingView>
           </View>
         </View>
-        <View style={styles.tabs}></View>
+        <View style={styles.delete}>
+          <Image source={require("../assets/Icons/trash-2.png")} />
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -175,5 +180,15 @@ const styles = StyleSheet.create({
     fontFamily: "RobotoRegular",
     color: "#BDBDBD",
     fontSize: 16,
+  },
+  delete: {
+    marginTop: 120,
+    marginHorizontal: 153,
+    width: 70,
+    height: 40,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

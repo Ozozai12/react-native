@@ -32,7 +32,7 @@ export const useRoute = (authorized) => {
   return (
     <Tab.Navigator tabBarOptions={{ showLabel: false }}>
       <Tab.Screen
-        name="Публікації"
+        name="Posts"
         component={Posts}
         options={{
           headerShown: false,
@@ -42,10 +42,11 @@ export const useRoute = (authorized) => {
         }}
       />
       <Tab.Screen
-        name="Створити публікацію"
+        name="CreatePost"
         component={CreatePost}
         options={{
           headerShown: false,
+          tabBarStyle: { display: "none" },
           tabBarIcon: ({ focused, size, color }) => (
             <View
               style={{
@@ -63,7 +64,7 @@ export const useRoute = (authorized) => {
         }}
       />
       <Tab.Screen
-        name="Профіль"
+        name="Profile"
         component={Profile}
         options={{
           headerShown: false,
