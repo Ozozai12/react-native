@@ -4,6 +4,10 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import Posts from "./Posts";
+import CreatePost from "./CreatePost";
+import Profile from "./Profile";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function Home() {
@@ -12,12 +16,6 @@ export default function Home() {
     RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
   });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
   if (!fontsLoaded) {
     return null;
   }
@@ -25,31 +23,50 @@ export default function Home() {
   const Tab = createBottomTabNavigator();
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <View style={styles.header}>
-        <View
-          style={{ width: 24, height: 24, backgroundColor: "transparent" }}
-        />
-        <Text style={styles.title}>Публікації</Text>
-        <Image
-          style={styles.logout}
-          source={require("../assets/Icons/log-out.png")}
-        />
-      </View>
-      <View style={styles.main}>
-        <View style={styles.profile}>
-          <Image
-            style={styles.avatar}
-            source={require("../assets/Images/avatar.jpg")}
-          />
-          <View style={styles.profileInfo}>
-            <Text style={styles.name}>Natali Romanova</Text>
-            <Text style={styles.email}>email@example.com</Text>
-          </View>
-        </View>
-      </View>
-      <View style={styles.tabs}></View>
-    </View>
+    <Tab.Navigator tabBarOptions={{ showLabel: false }}>
+      <Tab.Screen
+        name="Posts"
+        component={Posts}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused, size, color }) => (
+            <Image source={require("../assets/Icons/grid.png")} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="CreatePost"
+        component={CreatePost}
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+          tabBarIcon: ({ focused, size, color }) => (
+            <View
+              style={{
+                width: 70,
+                height: 40,
+                backgroundColor: "#FF6C00",
+                borderRadius: 20,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image source={require("../assets/Icons/Union.png")} />
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused, size, color }) => (
+            <Image source={require("../assets/Icons/user.png")} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 }
 

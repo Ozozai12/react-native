@@ -3,10 +3,11 @@ import { useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function Posts() {
+export default function Posts({ navigation }) {
   const [fontsLoaded] = useFonts({
     RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
     RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
@@ -66,9 +67,14 @@ export default function Posts() {
                     alignItems: "center",
                   }}
                 >
-                  <Image
-                    source={require("../assets/Icons/message-circle.png")}
-                  />
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("Comments")}
+                  >
+                    <Image
+                      source={require("../assets/Icons/message-circle.png")}
+                    />
+                  </TouchableOpacity>
+
                   <Text
                     style={{
                       color: "#BDBDBD",
