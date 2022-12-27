@@ -269,7 +269,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   delete: {
-    marginTop: 120,
+    marginBottom: 34,
+    marginTop: "auto",
     marginHorizontal: 153,
     width: 70,
     height: 40,

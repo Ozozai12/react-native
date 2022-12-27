@@ -15,13 +15,15 @@ import * as SplashScreen from "expo-splash-screen";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function Comments({ navigation }) {
+export default function Comments({ navigation, route }) {
   const [comment, setComment] = useState("");
   const [keyboardShown, setKeyboardShown] = useState(false);
   const [fontsLoaded] = useFonts({
     RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
     RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
   });
+
+  const photo = route.params;
 
   const commentInputHandler = (text) => setComment(text);
 
@@ -55,7 +57,7 @@ export default function Comments({ navigation }) {
         </View>
 
         <View style={styles.main}>
-          <View style={styles.photoContainer} />
+          <Image source={{ uri: photo }} style={styles.imageContainer} />
           <View style={styles.comments}>
             <View style={styles.commentContainer}>
               <View style={styles.avatar} />
@@ -120,10 +122,10 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#BDBDBD",
   },
-  photoContainer: {
+  imageContainer: {
     width: 343,
     height: 240,
-    backgroundColor: "#F6F6F6",
+
     borderWidth: 1,
     borderColor: "#E8E8E8",
     borderRadius: 8,

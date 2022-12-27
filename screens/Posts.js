@@ -86,7 +86,9 @@ export default function Posts({ navigation, route }) {
                       }}
                     >
                       <TouchableOpacity
-                        onPress={() => navigation.navigate("Comments")}
+                        onPress={() =>
+                          navigation.navigate("Comments", item.photo)
+                        }
                       >
                         <Image
                           source={require("../assets/Icons/message-circle.png")}
