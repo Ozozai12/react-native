@@ -1,9 +1,14 @@
-import { View, Text, StyleSheet, Image, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,8 +37,6 @@ export default function Posts({ navigation, route }) {
     return null;
   }
 
-  const Tab = createBottomTabNavigator();
-  console.log(posts);
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
       <View style={styles.header}>
