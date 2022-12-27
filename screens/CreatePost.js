@@ -53,7 +53,9 @@ export default function CreatePost({ navigation }) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
         let location = await Location.getCurrentPositionAsync({});
-        setCoords(`${location.coords.latitude} ${location.coords.longitude}`);
+        setCoords(
+          `{latitude: ${location.coords.latitude}, longitude: ${location.coords.longitude}}`
+        );
 
         setPhoto(photo.uri);
       } catch (error) {
@@ -62,7 +64,6 @@ export default function CreatePost({ navigation }) {
     }
   };
 
-  console.log(coords);
   // const savePhoto = async () => {
   //   if (photo) {
   //     try {
@@ -90,13 +91,14 @@ export default function CreatePost({ navigation }) {
   }
 
   const sendPost = () => {
-    navigation.navigate("Posts", { photo, name, location });
+    navigation.navigate("Posts", { photo, name, location, coords });
     clearPost();
   };
 
   const clearPost = () => {
     setName("");
     setLocation("");
+    setCoords("");
     setPhoto(null);
   };
 

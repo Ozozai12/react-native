@@ -17,59 +17,38 @@ import MapView, { Marker } from "react-native-maps";
 SplashScreen.preventAutoHideAsync();
 
 export default function Map({ navigation }) {
-  const [comment, setComment] = useState("");
-  const [keyboardShown, setKeyboardShown] = useState(false);
-  const [fontsLoaded] = useFonts({
-    RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
-    RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
-  });
-
-  const commentInputHandler = (text) => setComment(text);
-
-  const keyboardClose = () => {
-    setKeyboardShown(false);
-    Keyboard.dismiss();
-  };
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
-    <TouchableWithoutFeedback onPress={keyboardClose}>
-      <View style={styles.container} onLayout={onLayoutRootView}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.navigate("Posts")}>
-            <Image source={require("../assets/Icons/arrow-left.png")} />
-          </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate("Posts")}>
+          <Image source={require("../assets/Icons/arrow-left.png")} />
+        </TouchableOpacity>
 
-          <Text style={styles.title}>Мапа</Text>
-          <View
-            style={{ width: 24, height: 24, backgroundColor: "transparent" }}
-          />
-        </View>
-
-        <View style={styles.main}>
-          <MapView
-            style={{ flex: 1 }}
-            initialRegion={{
-              latitude: 30,
-              longitude: 35,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            }}
-          >
-            <Marker coordinate={{ latitude: 30, longitude: 35 }} />
-          </MapView>
-        </View>
+        <Text style={styles.title}>Мапа</Text>
+        <View
+          style={{ width: 24, height: 24, backgroundColor: "transparent" }}
+        />
       </View>
-    </TouchableWithoutFeedback>
+
+      <View style={styles.main}>
+        <MapView
+          style={{ flex: 1 }}
+          initialRegion={{
+            latitude: 50.493740527937646,
+            longitude: 30.51120051185648,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }}
+        >
+          <Marker
+            coordinate={{
+              latitude: 50.493740527937646,
+              longitude: 30.51120051185648,
+            }}
+          />
+        </MapView>
+      </View>
+    </View>
   );
 }
 

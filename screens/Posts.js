@@ -105,7 +105,7 @@ export default function Posts({ navigation, route }) {
                       </Text>
                     </View>
                     <TouchableOpacity
-                      onPress={() => navigation.navigate("Map")}
+                      onPress={() => navigation.navigate("Map", item.coords)}
                       style={{
                         flexDirection: "row",
                         alignItems: "center",
