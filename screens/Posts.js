@@ -71,7 +71,7 @@ export default function Posts({ navigation, route }) {
                   />
                 </View>
                 <View style={styles.credentials}>
-                  <Text style={styles.postName}>Назва</Text>
+                  <Text style={styles.postName}>{item.name}</Text>
                   <View
                     style={{
                       flexDirection: "row",
@@ -120,7 +120,7 @@ export default function Posts({ navigation, route }) {
                           textDecorationLine: "underline",
                         }}
                       >
-                        Локація
+                        {item.location}
                       </Text>
                     </TouchableOpacity>
                   </View>

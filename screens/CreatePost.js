@@ -22,6 +22,7 @@ SplashScreen.preventAutoHideAsync();
 export default function CreatePost({ navigation }) {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
+  const [coords, setCoords] = useState("");
   const [keyboardShown, setKeyboardShown] = useState(false);
 
   const [hasLocPremissions, setHasLocPremissions] = useState(false);
@@ -44,9 +45,6 @@ export default function CreatePost({ navigation }) {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
     })();
   }, []);
 
@@ -54,8 +52,9 @@ export default function CreatePost({ navigation }) {
     if (cameraRef) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
-        const location = await Location.getCurrentPositionAsync();
-        console.log(location);
+        let location = await Location.getCurrentPositionAsync({});
+        setCoords(`${location.coords.latitude} ${location.coords.longitude}`);
+
         setPhoto(photo.uri);
       } catch (error) {
         console.log(error);
@@ -63,6 +62,7 @@ export default function CreatePost({ navigation }) {
     }
   };
 
+  console.log(coords);
   // const savePhoto = async () => {
   //   if (photo) {
   //     try {
@@ -90,7 +90,7 @@ export default function CreatePost({ navigation }) {
   }
 
   const sendPost = () => {
-    navigation.navigate("Posts", { photo, name });
+    navigation.navigate("Posts", { photo, name, location });
     clearPost();
   };
 
@@ -156,9 +156,18 @@ export default function CreatePost({ navigation }) {
                   onFocus={() => setKeyboardShown(true)}
                 />
               </View>
-              <TouchableOpacity style={styles.button} onPress={sendPost}>
-                <Text style={styles.buttonText}>Опублікувати</Text>
-              </TouchableOpacity>
+              {photo && name && location ? (
+                <TouchableOpacity
+                  style={styles.buttonActive}
+                  onPress={sendPost}
+                >
+                  <Text style={styles.buttonTextActive}>Опублікувати</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.buttonInactive}>
+                  <Text style={styles.buttonTextInactive}>Опублікувати</Text>
+                </View>
+              )}
             </KeyboardAvoidingView>
           </View>
         </View>
@@ -241,7 +250,7 @@ const styles = StyleSheet.create({
     fontFamily: "RobotoMedium",
     fontSize: 16,
   },
-  button: {
+  buttonInactive: {
     marginTop: 32,
     marginHorizontal: 16,
     height: 50,
@@ -250,9 +259,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  buttonText: {
+  buttonActive: {
+    marginTop: 32,
+    marginHorizontal: 16,
+    height: 50,
+    backgroundColor: "#FF6C00",
+    borderRadius: 25,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonTextInactive: {
     fontFamily: "RobotoRegular",
     color: "#BDBDBD",
+    fontSize: 16,
+  },
+  buttonTextActive: {
+    fontFamily: "RobotoRegular",
+    color: "#fff",
     fontSize: 16,
   },
   delete: {
