@@ -12,9 +12,7 @@ import {
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Camera } from "expo-camera";
-import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 
 SplashScreen.preventAutoHideAsync();
@@ -53,9 +51,10 @@ export default function CreatePost({ navigation }) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
         let location = await Location.getCurrentPositionAsync({});
-        setCoords(
-          `{latitude: ${location.coords.latitude}, longitude: ${location.coords.longitude}}`
-        );
+        setCoords({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
 
         setPhoto(photo.uri);
       } catch (error) {
@@ -63,17 +62,6 @@ export default function CreatePost({ navigation }) {
       }
     }
   };
-
-  // const savePhoto = async () => {
-  //   if (photo) {
-  //     try {
-  //       await MediaLibrary.createAssetAsync(photo);
-  //       setPhoto(null);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
-  // };
 
   const keyboardClose = () => {
     setKeyboardShown(false);
