@@ -9,23 +9,70 @@ import {
   Keyboard,
   KeyboardAvoidingView,
 } from "react-native";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function CreatePost({ navigation }) {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
+  const [keyboardShown, setKeyboardShown] = useState(false);
+
+  const [hasLocPremissions, setHasLocPremissions] = useState(false);
+  const [photo, setPhoto] = useState(null);
+
+  const cameraRef = useRef(null);
+
   const [fontsLoaded] = useFonts({
     RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
     RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
   });
-  const [keyboardShown, setKeyboardShown] = useState(false);
+
   const nameInputHandler = (text) => setName(text);
   const locationInputHandler = (text) => setLocation(text);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
+  const takePhoto = async () => {
+    if (cameraRef) {
+      try {
+        const photo = await cameraRef.current.takePictureAsync();
+        const location = await Location.getCurrentPositionAsync();
+        console.log(location);
+        setPhoto(photo.uri);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  // const savePhoto = async () => {
+  //   if (photo) {
+  //     try {
+  //       await MediaLibrary.createAssetAsync(photo);
+  //       setPhoto(null);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+  // };
 
   const keyboardClose = () => {
     setKeyboardShown(false);
@@ -42,7 +89,16 @@ export default function CreatePost({ navigation }) {
     return null;
   }
 
-  const Tab = createBottomTabNavigator();
+  const sendPost = () => {
+    navigation.navigate("Posts", { photo, name });
+    clearPost();
+  };
+
+  const clearPost = () => {
+    setName("");
+    setLocation("");
+    setPhoto(null);
+  };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardClose}>
@@ -58,16 +114,26 @@ export default function CreatePost({ navigation }) {
           />
         </View>
         <View style={styles.main}>
-          <View style={styles.photoContainer}>
-            <View style={styles.photoIcon}>
-              <Image source={require("../assets/Icons/camera.png")} />
-            </View>
-          </View>
+          {!photo && (
+            <Camera style={styles.photoContainer} ref={cameraRef}>
+              <TouchableOpacity
+                style={styles.photoIcon}
+                onPress={() => takePhoto()}
+              >
+                <Image source={require("../assets/Icons/camera.png")} />
+              </TouchableOpacity>
+            </Camera>
+          )}
+
+          {photo && (
+            <Image source={{ uri: photo }} style={styles.photoContainer} />
+          )}
+
           <View style={styles.credentials}>
             <KeyboardAvoidingView
               behavior={Platform.OS == "ios" ? "padding" : "height"}
             >
-              <Text style={styles.credensTitle}>Завантажте фото</Text>
+              {!photo && <Text style={styles.credensTitle}>Зробіть фото!</Text>}
               <View style={styles.inputContainer}>
                 <TextInput
                   placeholder="Назва..."
@@ -90,15 +156,15 @@ export default function CreatePost({ navigation }) {
                   onFocus={() => setKeyboardShown(true)}
                 />
               </View>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity style={styles.button} onPress={sendPost}>
                 <Text style={styles.buttonText}>Опублікувати</Text>
               </TouchableOpacity>
             </KeyboardAvoidingView>
           </View>
         </View>
-        <View style={styles.delete}>
+        <TouchableOpacity style={styles.delete} onPress={() => clearPost()}>
           <Image source={require("../assets/Icons/trash-2.png")} />
-        </View>
+        </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -128,7 +194,6 @@ const styles = StyleSheet.create({
   photoContainer: {
     width: 343,
     height: 240,
-    backgroundColor: "#F6F6F6",
     borderWidth: 1,
     borderColor: "#E8E8E8",
     borderRadius: 8,
@@ -144,6 +209,15 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
+  },
+  photoBtn: {
+    height: 20,
+    width: 90,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "E8E8E8",
+    borderRadius: 5,
   },
   credentials: {
     marginTop: 8,

@@ -23,11 +23,13 @@ export default function Home() {
   const Tab = createBottomTabNavigator();
 
   return (
-    <Tab.Navigator tabBarOptions={{ showLabel: false }}>
+    <Tab.Navigator>
       <Tab.Screen
         name="Posts"
         component={Posts}
         options={{
+          tabBarShowLabel: false,
+
           headerShown: false,
           tabBarIcon: ({ focused, size, color }) => (
             <Image source={require("../assets/Icons/grid.png")} />
@@ -38,6 +40,8 @@ export default function Home() {
         name="CreatePost"
         component={CreatePost}
         options={{
+          tabBarShowLabel: false,
+
           headerShown: false,
           tabBarStyle: { display: "none" },
           tabBarIcon: ({ focused, size, color }) => (
@@ -60,6 +64,8 @@ export default function Home() {
         name="Profile"
         component={Profile}
         options={{
+          tabBarShowLabel: false,
+
           headerShown: false,
           tabBarIcon: ({ focused, size, color }) => (
             <Image source={require("../assets/Icons/user.png")} />

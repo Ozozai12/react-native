@@ -13,6 +13,7 @@ import CreatePost from "./screens/CreatePost";
 import Posts from "./screens/Posts";
 import Profile from "./screens/Profile";
 import Comments from "./screens/Comments";
+import Map from "./screens/Map";
 
 export const useRoute = (authorized) => {
   if (!authorized) {
@@ -42,6 +43,11 @@ export const useRoute = (authorized) => {
         options={{ headerShown: false }}
         name="Comments"
         component={Comments}
+      />
+      <OtherStack.Screen
+        options={{ headerShown: false }}
+        name="Map"
+        component={Map}
       />
     </OtherStack.Navigator>
   );
