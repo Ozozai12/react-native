@@ -13,19 +13,25 @@ import {
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { authSignInUser } from "../redux/auth/authOperations";
 
 SplashScreen.preventAutoHideAsync();
 
+const initialState = {
+  email: "",
+  password: "",
+};
+
 export default function Login({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [state, setState] = useState(initialState);
   const [keyboardShown, setKeyboardShown] = useState(false);
   const [fontsLoaded] = useFonts({
     RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
     RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
   });
-  const emailInputHandler = (text) => setEmail(text);
-  const passwordInputHandler = (text) => setPassword(text);
+
+  const dispatch = useDispatch();
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -38,7 +44,8 @@ export default function Login({ navigation }) {
   }
 
   const onLogin = () => {
-    navigation.navigate("Home");
+    dispatch(authSignInUser(state));
+    setState(initialState);
   };
 
   const keyboardClose = () => {
@@ -77,8 +84,13 @@ export default function Login({ navigation }) {
                 <View>
                   <TextInput
                     placeholder="Адреса електронної пошти"
-                    value={email}
-                    onChangeText={emailInputHandler}
+                    value={state.email}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({
+                        ...prevState,
+                        email: value,
+                      }))
+                    }
                     style={styles.input}
                     onFocus={() => setKeyboardShown(true)}
                   />
@@ -93,8 +105,13 @@ export default function Login({ navigation }) {
                   <TextInput
                     secureTextEntry={true}
                     placeholder="Пароль"
-                    value={password}
-                    onChangeText={passwordInputHandler}
+                    value={state.password}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({
+                        ...prevState,
+                        password: value,
+                      }))
+                    }
                     style={styles.input}
                     onFocus={() => setKeyboardShown(true)}
                   />

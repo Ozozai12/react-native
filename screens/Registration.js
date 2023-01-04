@@ -14,21 +14,27 @@ import {
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
+
+import { authSignUpUser } from "../redux/auth/authOperations";
 
 SplashScreen.preventAutoHideAsync();
 
+const initialState = {
+  email: "",
+  password: "",
+  nickname: "",
+};
+
 export default function Registration({ navigation }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [state, setState] = useState(initialState);
   const [keyboardShown, setKeyboardShown] = useState(false);
   const [fontsLoaded] = useFonts({
     RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
     RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
   });
-  const nameInputHandler = (text) => setName(text);
-  const emailInputHandler = (text) => setEmail(text);
-  const passwordInputHandler = (text) => setPassword(text);
+
+  const dispatch = useDispatch();
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -41,7 +47,8 @@ export default function Registration({ navigation }) {
   }
 
   const onLogin = () => {
-    navigation.navigate("Home");
+    dispatch(authSignUpUser(state));
+    setState(initialState);
   };
 
   const keyboardClose = () => {
@@ -86,18 +93,28 @@ export default function Registration({ navigation }) {
                 <View>
                   <TextInput
                     placeholder="Логін"
-                    value={name}
-                    onChangeText={nameInputHandler}
+                    value={state.nickname}
                     style={styles.input}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({
+                        ...prevState,
+                        nickname: value,
+                      }))
+                    }
                     onFocus={() => setKeyboardShown(true)}
                   />
                 </View>
                 <View style={{ marginTop: 16 }}>
                   <TextInput
                     placeholder="Адреса електронної пошти"
-                    value={email}
-                    onChangeText={emailInputHandler}
+                    value={state.email}
                     style={styles.input}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({
+                        ...prevState,
+                        email: value,
+                      }))
+                    }
                     onFocus={() => setKeyboardShown(true)}
                   />
                 </View>
@@ -111,9 +128,14 @@ export default function Registration({ navigation }) {
                   <TextInput
                     secureTextEntry={true}
                     placeholder="Пароль"
-                    value={password}
-                    onChangeText={passwordInputHandler}
+                    value={state.password}
                     style={styles.input}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({
+                        ...prevState,
+                        password: value,
+                      }))
+                    }
                     onFocus={() => setKeyboardShown(true)}
                   />
                 </View>
