@@ -9,6 +9,8 @@ import {
 import { useState, useEffect, useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { authSignOutUser } from "../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,6 +22,8 @@ export default function Posts({ navigation, route }) {
   });
 
   const [posts, setPosts] = useState([]);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (route.params) {
@@ -44,10 +48,12 @@ export default function Posts({ navigation, route }) {
           style={{ width: 24, height: 24, backgroundColor: "transparent" }}
         />
         <Text style={styles.title}>Публікації</Text>
-        <Image
+        <TouchableOpacity
           style={styles.logout}
-          source={require("../assets/Icons/log-out.png")}
-        />
+          onPress={() => dispatch(authSignOutUser())}
+        >
+          <Image source={require("../assets/Icons/log-out.png")} />
+        </TouchableOpacity>
       </View>
       <View style={styles.main}>
         <View style={styles.profile}>

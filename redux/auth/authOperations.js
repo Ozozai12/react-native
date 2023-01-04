@@ -6,20 +6,20 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
+import { Alert } from "react-native";
 
 import { auth } from "../../firebase/config";
 import { authSlice } from "./authReducer";
 
-// export const authSignInUser =
-//   ({ email, password }) =>
-//   async (dispatch, getState) => {
-//     try {
-//       const auth = getAuth();
-//       const user = await signInWithEmailAndPassword(auth, email, password);
-//     } catch (error) {
-//       console.log(error.message);
-//     }
-//   };
+export const authSignInUser =
+  ({ email, password }) =>
+  async (dispatch, getState) => {
+    try {
+      const user = await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      Alert.alert("Entered email or password are incorrect!");
+    }
+  };
 
 export const authSignUpUser =
   ({ email, password, nickname }) =>
@@ -57,7 +57,6 @@ export const authStateChanged = () => async (dispatch) => {
 };
 
 export const authSignOutUser = () => async (dispatch, getState) => {
-  const auth = getAuth();
   await signOut(auth);
 
   dispatch(authSlice.actions.authSignOut());

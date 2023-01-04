@@ -6,8 +6,12 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { authSignOutUser } from "../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 export default function Profile({ navigation }) {
+  const dispatch = useDispatch();
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -26,10 +30,13 @@ export default function Profile({ navigation }) {
                 source={require("../assets/Icons/remove.png")}
               />
             </View>
-            <Image
+            <TouchableOpacity
+              onPress={() => dispatch(authSignOutUser())}
               style={styles.logout}
-              source={require("../assets/Icons/log-out.png")}
-            />
+            >
+              <Image source={require("../assets/Icons/log-out.png")} />
+            </TouchableOpacity>
+
             <Text style={styles.username}>Natali Romanova</Text>
             <View style={styles.posts}>
               <View style={styles.postItem}>
