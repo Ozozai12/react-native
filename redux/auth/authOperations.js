@@ -27,11 +27,9 @@ export const authSignUpUser =
     try {
       await createUserWithEmailAndPassword(auth, email, password);
 
-      const user = await getAuth().currentUser;
+      await updateProfile(auth.currentUser, { displayName: nickname });
 
-      await updateProfile(user, { displayName: nickname });
-
-      const { displayName, uid } = await getAuth().currentUser;
+      const { displayName, uid } = auth.currentUser;
 
       dispatch(
         authSlice.actions.updateUserProfile({
@@ -45,12 +43,10 @@ export const authSignUpUser =
   };
 
 export const authStateChanged = () => async (dispatch) => {
-  const auth = getAuth();
-
   await onAuthStateChanged(auth, (user) => {
     if (user) {
       const userUpdateProfile = {
-        nickName: user.displayName,
+        nickname: user.displayName,
         userId: user.uid,
       };
 
