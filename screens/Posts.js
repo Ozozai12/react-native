@@ -6,11 +6,19 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import {
+  collection,
+  query,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { useState, useEffect, useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { authSignOutUser } from "../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
+import { db } from "../firebase/config";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,10 +34,19 @@ export default function Posts({ navigation, route }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
+    getAllPosts();
+  }, []);
+
+  const getAllPosts = async () => {
+    try {
+      const ref = query(collection(firestore, "posts"));
+      onSnapshot(ref, (snapshot) => {
+        setPosts(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      });
+    } catch (error) {
+      console.log("ERROR: ", error.message);
     }
-  }, [route.params]);
+  };
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
