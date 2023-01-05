@@ -10,12 +10,14 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
-import db from "../firebase/config";
+import { db } from "../firebase/config";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,6 +36,8 @@ export default function CreatePost({ navigation }) {
     RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
     RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
   });
+
+  const { userId, nickname } = useSelector((state) => state.auth);
 
   const nameInputHandler = (text) => setName(text);
   const locationInputHandler = (text) => setLocation(text);
@@ -82,7 +86,7 @@ export default function CreatePost({ navigation }) {
 
   const sendPost = () => {
     navigation.navigate("Posts", { photo, name, location, coords });
-    uploadPhotoToServer();
+    uploadPostToServer();
     clearPost();
   };
 
@@ -106,6 +110,22 @@ export default function CreatePost({ navigation }) {
 
       const photoRef = await getDownloadURL(storageRef);
       return photoRef;
+    } catch (error) {
+      console.log("ERROR: ", error.message);
+    }
+  };
+
+  const uploadPostToServer = async () => {
+    try {
+      const photoRef = await uploadPhotoToServer();
+      const postRef = await addDoc(collection(db, "posts"), {
+        photo: photoRef,
+        name,
+        location,
+        coords,
+        userId,
+        nickname,
+      });
     } catch (error) {
       console.log("ERROR: ", error.message);
     }
