@@ -14,6 +14,8 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
+import db from "../firebase/config";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -80,6 +82,7 @@ export default function CreatePost({ navigation }) {
 
   const sendPost = () => {
     navigation.navigate("Posts", { photo, name, location, coords });
+    uploadPhotoToServer();
     clearPost();
   };
 
@@ -88,6 +91,24 @@ export default function CreatePost({ navigation }) {
     setLocation("");
     setCoords("");
     setPhoto(null);
+  };
+
+  const uploadPhotoToServer = async () => {
+    try {
+      const response = await fetch(photo);
+      const file = await response.blob();
+
+      const uniquePostId = Date.now().toString();
+
+      const storage = getStorage();
+      const storageRef = ref(storage, `postImage/${uniquePostId}`);
+      await uploadBytes(storageRef, file);
+
+      const photoRef = await getDownloadURL(storageRef);
+      return photoRef;
+    } catch (error) {
+      console.log("ERROR: ", error.message);
+    }
   };
 
   return (
