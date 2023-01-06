@@ -6,11 +6,38 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { collection, query, onSnapshot, where } from "firebase/firestore";
 import { authSignOutUser } from "../redux/auth/authOperations";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { db } from "../firebase/config";
+import { FlatList } from "react-native-gesture-handler";
 
 export default function Profile({ navigation }) {
+  const [userPosts, setUserPosts] = useState([]);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    getUserPosts();
+  }, []);
+
+  const { userId, nickname } = useSelector((state) => state.auth);
+
+  const getUserPosts = async () => {
+    try {
+      const ref = query(
+        collection(db, "posts"),
+        where("userId", "==", `${userId}`)
+      );
+      onSnapshot(ref, (snapshot) => {
+        setUserPosts(
+          snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      });
+    } catch (error) {
+      console.log("ERROR: ", error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -37,78 +64,96 @@ export default function Profile({ navigation }) {
               <Image source={require("../assets/Icons/log-out.png")} />
             </TouchableOpacity>
 
-            <Text style={styles.username}>Natali Romanova</Text>
+            <Text style={styles.username}>{nickname}</Text>
             <View style={styles.posts}>
-              <View style={styles.postItem}>
-                <View style={styles.postBackdrop} />
-                <View style={styles.credentials}>
-                  <Text style={styles.postName}>Назва</Text>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => navigation.navigate("Comments")}
-                      >
-                        <Image
-                          source={require("../assets/Icons/message-circle.png")}
-                        />
-                      </TouchableOpacity>
-                      <Text
-                        style={{
-                          color: "#BDBDBD",
-                          fontFamily: "RobotoRegular",
-                          fontSize: 16,
-                          marginLeft: 6,
-                        }}
-                      >
-                        0
-                      </Text>
+              <FlatList
+                data={userPosts}
+                keyExtractor={(item, idx) => idx.toString()}
+                renderItem={({ item }) => (
+                  <View style={styles.postItem}>
+                    <View>
                       <Image
-                        source={require("../assets/Icons/thumbs-up.png")}
-                        style={{ marginLeft: 24 }}
+                        source={{ uri: item.photo }}
+                        style={styles.postImage}
                       />
-                      <Text
-                        style={{
-                          color: "#BDBDBD",
-                          fontFamily: "RobotoRegular",
-                          fontSize: 16,
-                          marginLeft: 6,
-                        }}
-                      >
-                        0
-                      </Text>
                     </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Image source={require("../assets/Icons/map-pin.png")} />
-                      <Text
+                    <View style={styles.credentials}>
+                      <Text style={styles.postName}>{item.name}</Text>
+                      <View
                         style={{
-                          fontFamily: "RobotoRegular",
-                          fontSize: 16,
-                          marginLeft: 4,
-                          textDecorationLine: "underline",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
                         }}
                       >
-                        Локація
-                      </Text>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigation.navigate("Comments", {
+                                photo: item.photo,
+                                postId: item.id,
+                              })
+                            }
+                          >
+                            <Image
+                              source={require("../assets/Icons/message-circle.png")}
+                            />
+                          </TouchableOpacity>
+                          <Text
+                            style={{
+                              color: "#BDBDBD",
+                              fontFamily: "RobotoRegular",
+                              fontSize: 16,
+                              marginLeft: 6,
+                            }}
+                          >
+                            0
+                          </Text>
+                          <Image
+                            source={require("../assets/Icons/thumbs-up.png")}
+                            style={{ marginLeft: 24 }}
+                          />
+                          <Text
+                            style={{
+                              color: "#BDBDBD",
+                              fontFamily: "RobotoRegular",
+                              fontSize: 16,
+                              marginLeft: 6,
+                            }}
+                          >
+                            0
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Image
+                            source={require("../assets/Icons/map-pin.png")}
+                          />
+                          <Text
+                            style={{
+                              fontFamily: "RobotoRegular",
+                              fontSize: 16,
+                              marginLeft: 4,
+                              textDecorationLine: "underline",
+                            }}
+                          >
+                            {item.location}
+                          </Text>
+                        </View>
+                      </View>
                     </View>
                   </View>
-                </View>
-              </View>
+                )}
+              />
             </View>
           </View>
         </View>
@@ -172,7 +217,7 @@ const styles = StyleSheet.create({
     marginTop: 33,
     justifyContent: "center",
   },
-  postBackdrop: {
+  postImage: {
     width: 343,
     height: 240,
     backgroundColor: "#E8E8E8",

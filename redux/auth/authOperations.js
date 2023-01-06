@@ -9,7 +9,7 @@ import {
 import { Alert } from "react-native";
 
 import { auth } from "../../firebase/config";
-import { authSlice } from "./authReducer";
+import { authSlice } from "./authSlice";
 
 export const authSignInUser =
   ({ email, password }) =>
@@ -35,6 +35,7 @@ export const authSignUpUser =
         authSlice.actions.updateUserProfile({
           userId: uid,
           nickname: displayName,
+          email,
         })
       );
     } catch (error) {
@@ -46,6 +47,7 @@ export const authStateChanged = () => async (dispatch) => {
   await onAuthStateChanged(auth, (user) => {
     if (user) {
       const userUpdateProfile = {
+        email: user.email,
         nickname: user.displayName,
         userId: user.uid,
       };

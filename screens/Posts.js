@@ -6,18 +6,12 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import {
-  collection,
-  query,
-  doc,
-  onSnapshot,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, query, onSnapshot } from "firebase/firestore";
 import { useState, useEffect, useCallback } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { authSignOutUser } from "../redux/auth/authOperations";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { db } from "../firebase/config";
 
 SplashScreen.preventAutoHideAsync();
@@ -33,13 +27,15 @@ export default function Posts({ navigation, route }) {
 
   const dispatch = useDispatch();
 
+  const { nickname, email } = useSelector((state) => state.auth);
+
   useEffect(() => {
     getAllPosts();
   }, []);
 
   const getAllPosts = async () => {
     try {
-      const ref = query(collection(firestore, "posts"));
+      const ref = query(collection(db, "posts"));
       onSnapshot(ref, (snapshot) => {
         setPosts(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
       });
@@ -79,8 +75,8 @@ export default function Posts({ navigation, route }) {
             source={require("../assets/Images/avatar.jpg")}
           />
           <View style={styles.profileInfo}>
-            <Text style={styles.name}>Natali Romanova</Text>
-            <Text style={styles.email}>email@example.com</Text>
+            <Text style={styles.name}>{nickname}</Text>
+            <Text style={styles.email}>{email}</Text>
           </View>
         </View>
 
@@ -113,7 +109,10 @@ export default function Posts({ navigation, route }) {
                     >
                       <TouchableOpacity
                         onPress={() =>
-                          navigation.navigate("Comments", item.photo)
+                          navigation.navigate("Comments", {
+                            photo: item.photo,
+                            postId: item.id,
+                          })
                         }
                       >
                         <Image

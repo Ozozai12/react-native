@@ -7,23 +7,67 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
-  KeyboardAvoidingView,
+  FlatList,
 } from "react-native";
-import { useState, useCallback } from "react";
+import {
+  collection,
+  doc,
+  addDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { useState, useCallback, useEffect } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { useSelector } from "react-redux";
+import { db } from "../firebase/config";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Comments({ navigation, route }) {
   const [comment, setComment] = useState("");
+  const [allComments, setAllComments] = useState([]);
   const [keyboardShown, setKeyboardShown] = useState(false);
   const [fontsLoaded] = useFonts({
     RobotoMedium: require("../assets/fonts/Roboto-Medium.ttf"),
     RobotoRegular: require("../assets/fonts/Roboto-Regular.ttf"),
   });
 
-  const photo = route.params;
+  const { postId, photo } = route.params;
+  const { nickname } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    getAllComments();
+  }, []);
+
+  const createComment = async () => {
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
+    try {
+      const postDocRef = await doc(db, "posts", postId);
+      await addDoc(collection(postDocRef, "comments"), {
+        comment,
+        nickname,
+        date,
+        time,
+        // commentAvatar: avatarImage,
+      });
+      await updateDoc(postDocRef, { commentsQuantity: commentsQuantity + 1 });
+    } catch (error) {
+      console.log("ERROR: ", error.message);
+    }
+  };
+
+  const getAllComments = async () => {
+    try {
+      const ref = await doc(db, "posts", postId);
+      onSnapshot(collection(ref, "comments"), (snapshot) => {
+        setAllComments(snapshot.docs.map((doc) => ({ ...doc.data() })));
+      });
+    } catch (error) {
+      console.log("ERROR: ", error.message);
+    }
+  };
 
   const commentInputHandler = (text) => setComment(text);
 
@@ -58,31 +102,22 @@ export default function Comments({ navigation, route }) {
 
         <View style={styles.main}>
           <Image source={{ uri: photo }} style={styles.imageContainer} />
-          <View style={styles.comments}>
-            <View style={styles.commentContainer}>
-              <View style={styles.avatar} />
-              <View style={styles.commentItem}>
-                <Text style={styles.commentText}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam.
-                </Text>
-                <Text style={styles.commentTime}>18 грудня 2022 | 00:00</Text>
+          <FlatList
+            data={allComments}
+            style={styles.comments}
+            renderItem={({ item }) => (
+              <View style={styles.userCommentContainer}>
+                <View style={styles.userAvatar} />
+                <View style={styles.userCommentItem}>
+                  <Text style={styles.userCommentText}>{item.comment}</Text>
+                  <Text style={styles.userCommentTime}>
+                    {item.date} | {item.time}
+                  </Text>
+                </View>
               </View>
-            </View>
-            <View style={styles.userCommentContainer}>
-              <View style={styles.userAvatar} />
-              <View style={styles.userCommentItem}>
-                <Text style={styles.userCommentText}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor.
-                </Text>
-                <Text style={styles.userCommentTime}>
-                  18 грудня 2022 | 00:00
-                </Text>
-              </View>
-            </View>
-          </View>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
         </View>
         <View style={styles.commentInput}>
           <TextInput
@@ -92,9 +127,9 @@ export default function Comments({ navigation, route }) {
             style={{ paddingLeft: 16, fontSize: 16, color: "#BDBDBD" }}
             onFocus={() => setKeyboardShown(true)}
           />
-          <View style={styles.commetnBtn}>
+          <TouchableOpacity style={styles.commetnBtn} onPress={createComment}>
             <Image source={require("../assets/Icons/Vector.png")} />
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableWithoutFeedback>
