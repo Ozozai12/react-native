@@ -208,6 +208,9 @@ const styles = StyleSheet.create({
     marginTop: 32,
     justifyContent: "center",
   },
+  postItem: {
+    marginTop: 35,
+  },
   postBackdrop: {
     width: 343,
     height: 240,

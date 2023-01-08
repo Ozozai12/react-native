@@ -217,6 +217,9 @@ const styles = StyleSheet.create({
     marginTop: 33,
     justifyContent: "center",
   },
+  postItem: {
+    marginTop: 35,
+  },
   postImage: {
     width: 343,
     height: 240,
